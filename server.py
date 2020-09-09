@@ -72,7 +72,7 @@ def clowntown():
 
 @app.route('/track')
 def track():
-  return render_template("track.html",hits=Hits.query.order_by(desc(Hits.time)).limit(3).all())
+  return render_template("track.html",hits=Hits.query.order_by(desc(Hits.time)).limit(100).all())
 
 @app.route('/secret')
 @jwt_required
