@@ -7,7 +7,8 @@
 <table>
 {% for hit in hits %}
 <tr>
-<td>{{hit.ipaddr}}<br>{{hit.time}}</td>
+<td><a href="https://who.is/whois-ip/ip-address/{{hit.ipaddr}}">{{hit.ipaddr}}</a><br>
+{{hit.time}}</td>
 <td><pre>{{hit.headers}}</pre></td>
 </tr>
 {% endfor %}
