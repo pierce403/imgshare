@@ -1,0 +1,19 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN"><html>
+<title>Hello there.</title>
+<body>
+<h2>list of clowns:</h2>
+
+<table>
+{% for hit in hits %}
+<tr>
+<td>{{hit.ipaddr}}<br>{{hit.time}}</td>
+<td><pre>{{hit.headers}}</pre></td>
+</tr>
+{% endfor %}
+</table>
+
+</ul>
+</body>
+</html>
+
