@@ -61,7 +61,11 @@ def clowntown():
   
   try:
     h = Hits()
-    h.ipaddr = request.remote_addr
+    if request.headers['X-Forwarded-For']:
+      h.ipaddr = request.headers['X-Forwarded-For']
+    else:
+      h.ipaddr = request.remote_addr
+
     h.headers = str(request.headers)
     db.session.add(h)
     db.session.commit()
