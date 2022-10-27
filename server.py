@@ -56,7 +56,7 @@ class User(db.Model):
 def landing():
   return render_template("index.html")
 
-@app.route('/*.gif')
+@app.route('/cG9vcAo.gif')
 def clowntown():
   
   try:
