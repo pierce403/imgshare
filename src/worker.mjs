@@ -56,7 +56,12 @@ export default{async fetch(request,env){
   if(path==='/cG9vcAo.gif'){
     if(request.method==='GET'&&env.READ_ONLY!=='true'){
       const ip=request.headers.get('CF-Connecting-IP')||request.headers.get('X-Forwarded-For')||'';
-      try{await env.DB.prepare('INSERT INTO hits(time,ipaddr,headers) VALUES(?,?,?)').bind(new Date().toISOString(),ip,safeHeaders(request.headers)).run();}
+      try{
+        for(let attempt=0;;attempt++){
+          try{await env.DB.prepare('INSERT INTO hits(time,ipaddr,headers) VALUES(?,?,?)').bind(new Date().toISOString(),ip,safeHeaders(request.headers)).run();break;}
+          catch(error){if(attempt>=3||!String(error.message).includes('UNIQUE constraint failed: hits.time'))throw error;}
+        }
+      }
       catch{console.error('Tracking insert failed');}
     }
     const response=await env.ASSETS.fetch(new Request(new URL('/static/clowntown.gif',request.url),{method:request.method}));

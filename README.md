@@ -9,6 +9,8 @@ headers are redacted before storage and display. Unknown paths return real 404s.
 
 `npm ci`, `npm test` and `npm run check:deploy` validate the port. Production
 publishing uses Cloudflare native Git builds from `main`, with previews disabled.
+Set and save that production branch explicitly in Cloudflare after connecting the
+repository; onboarding can retain the old default branch in its cached metadata.
 The separate `staging` environment uses its own D1 and session secret. Production
 tracking stays read-only until the old ephemeral SQLite state is reconciled.
 

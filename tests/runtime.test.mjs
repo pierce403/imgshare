@@ -32,8 +32,10 @@ test('real Worker preserves tracking, escapes records, redacts credentials, free
   const stored=await db.prepare('SELECT * FROM hits').all();assert.equal(stored.results.length,1);assert.equal(stored.results[0].ipaddr,'192.0.2.1');assert.doesNotMatch(stored.results[0].headers,/secret-cookie|secret-auth|secret-key/);
   const track=await (await mf.dispatchFetch('https://imgshare.test/track')).text();assert.match(track,/192.0.2.1/);assert.match(track,/&lt;script&gt;/);assert.doesNotMatch(track,/<script>/);
   await mf.dispatchFetch('https://imgshare.test/cG9vcAo.gif',{method:'HEAD'});assert.equal((await db.prepare('SELECT COUNT(*) AS n FROM hits').first()).n,1);
+  await Promise.all(Array.from({length:4},async()=>{const response=await mf.dispatchFetch('https://imgshare.test/cG9vcAo.gif');assert.equal(response.status,200);await response.arrayBuffer();}));
+  assert.equal((await db.prepare('SELECT COUNT(*) AS n FROM hits').first()).n,5);
   await mf.setOptions(convert({...base,bindings:{...base.bindings,READ_ONLY:'true'}}));db=await mf.getD1Database('DB');
-  const frozen=await mf.dispatchFetch('https://imgshare.test/cG9vcAo.gif');await frozen.arrayBuffer();assert.equal((await db.prepare('SELECT COUNT(*) AS n FROM hits').first()).n,1);
+  const frozen=await mf.dispatchFetch('https://imgshare.test/cG9vcAo.gif');await frozen.arrayBuffer();assert.equal((await db.prepare('SELECT COUNT(*) AS n FROM hits').first()).n,5);
   assert.equal((await mf.dispatchFetch('https://imgshare.test/secret')).status,401);
   const w=Wallet.createRandom(),other=Wallet.createRandom(),now=Math.floor(Date.now()/1000),bucket=now-now%600;
   const login=async(signature)=>mf.dispatchFetch('https://imgshare.test/login',{method:'POST',body:JSON.stringify([w.address,signature]),headers:{'Content-Type':'application/json'}});
