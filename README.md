@@ -12,7 +12,8 @@ publishing uses Cloudflare native Git builds from `main`, with previews disabled
 Set and save that production branch explicitly in Cloudflare after connecting the
 repository; onboarding can retain the old default branch in its cached metadata.
 The separate `staging` environment uses its own D1 and session secret. Production
-tracking stays read-only until the old ephemeral SQLite state is reconciled.
+tracking is enabled after the old tracking snapshot, router freeze and D1 state
+were reconciled as empty. The source User model has no application writers.
 
 `SESSION_SECRET` is a stable Cloudflare secret; the source regenerated its issuer
 on every process start, so users sign in again after migration. Signed login keeps

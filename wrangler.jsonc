@@ -13,7 +13,7 @@
   },
   "vars": {
     "AUTH_DOMAIN": "imgshare.app",
-    "READ_ONLY": "true"
+    "READ_ONLY": "false"
   },
   "d1_databases": [
     {
