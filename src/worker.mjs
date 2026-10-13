@@ -60,12 +60,12 @@ export default{async fetch(request,env){
       catch{console.error('Tracking insert failed');}
     }
     const response=await env.ASSETS.fetch(new Request(new URL('/static/clowntown.gif',request.url),{method:request.method}));
-    const headers=new Headers(response.headers);headers.set('Cache-Control','no-store');return new Response(response.body,{status:response.status,headers});
+    const headers=new Headers(response.headers);headers.set('Cache-Control','no-store');if(env.READ_ONLY==='true')headers.set('X-Tracking-Read-Only','true');return new Response(response.body,{status:response.status,headers});
   }
   if(path==='/track'){
     const {results}=await env.DB.prepare('SELECT time,ipaddr,headers FROM hits ORDER BY time DESC LIMIT 100').all();
     const rows=results.map(h=>`<tr><td><a href="https://who.is/whois-ip/ip-address/${encodeURIComponent(h.ipaddr??'')}">${escape(h.ipaddr)}</a><br>${escape(h.time)}</td><td><pre>${escape((h.headers??'').split(/\r?\n/).map(line=>sensitive.test(line.split(':')[0])?line.split(':')[0]+': [redacted]':line).join('\n'))}</pre></td></tr>`).join('\n');
-    return html(`<!DOCTYPE html><html><title>Hello there.</title><body><h2>list of clowns:</h2><table>${rows}</table></body></html>`);
+    return html(`<!DOCTYPE html><html><title>Hello there.</title><body><h2>list of clowns:</h2>${env.READ_ONLY==='true'?'<p>Tracking is temporarily read-only during migration.</p>':''}<table>${rows}</table></body></html>`);
   }
   if(path==='/secret'){
     const address=env.SESSION_SECRET&&await readSession(cookie(request,'access_token_cookie'),env.SESSION_SECRET);if(!address)return json({msg:'Missing or invalid access token'},401);
