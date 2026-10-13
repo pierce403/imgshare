@@ -24,3 +24,10 @@ The original `/secret` GST gate needs an RPC endpoint (`RPC_URL`, formerly `web3
 Heroku had no such variable configured. It fails closed with 503 until configured;
 tests use a mock and never submit a transaction. The original Python deployment
 remains in Git history and `heroku-recovery/requirements.txt` for recovery.
+
+
+Cutover uses the exact ordinary Worker route `imgshare.app/*` over the preserved
+proxied Heroku CNAME. Keep the original source frozen. Before restoring Heroku
+writes after Cloudflare has accepted tracking data, first freeze Cloudflare and
+reverse-transfer all accepted records into SQLite; a routing-only rollback loses
+new data. Private recovery exports must never be committed to this repository.
